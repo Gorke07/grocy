@@ -37,7 +37,7 @@ class StockReportsController extends BaseController
 				{
 					$where .= ' AND pg.id IS NULL';
 				}
-				elseif ($request->getQueryParams()['product-group'] != 'all')
+				elseif ($request->getQueryParams()['product-group'] != 'all' && filter_var($request->getQueryParams()['product-group'], FILTER_VALIDATE_INT) !== false)
 				{
 					$where .= ' AND pg.id = ' . $request->getQueryParams()['product-group'];
 				}
