@@ -3,17 +3,10 @@
 namespace Grocy\Middleware;
 
 use Grocy\Services\SessionService;
-use DI\Container;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class SessionAuthMiddleware extends AuthMiddleware
 {
-	public function __construct(Container $container, ResponseFactoryInterface $responseFactory)
-	{
-		parent::__construct($container, $responseFactory);
-	}
-
 	public function authenticate(Request $request)
 	{
 		$sessionService = SessionService::getInstance();

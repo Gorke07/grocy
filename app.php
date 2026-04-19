@@ -4,7 +4,6 @@ use Grocy\Controllers\ExceptionController;
 use Grocy\Helpers\UrlManager;
 use Grocy\Helpers\SlimBladeView;
 use Grocy\Middleware\LocaleMiddleware;
-use Grocy\Middleware\CorsMiddleware;
 use Psr\Container\ContainerInterface as Container;
 use Slim\Factory\AppFactory;
 
@@ -108,7 +107,7 @@ if (!empty(GROCY_BASE_PATH))
 
 if (GROCY_MODE === 'production' || GROCY_MODE === 'dev')
 {
-	$app->add(new LocaleMiddleware($container));
+	$app->add(new LocaleMiddleware($container, $app->getResponseFactory()));
 }
 else
 {
@@ -125,8 +124,6 @@ $errorMiddleware = $app->addErrorMiddleware(true, false, false);
 $errorMiddleware->setDefaultErrorHandler(
 	new ExceptionController($app, $container)
 );
-
-$app->add(new CorsMiddleware($app->getResponseFactory()));
 
 $app->getRouteCollector()->setCacheFile(GROCY_DATAPATH . '/viewcache/route_cache.php');
 
