@@ -12,7 +12,7 @@ class BaseMiddleware
 	{
 		$this->AppContainer = $container;
 		$this->ResponseFactory = $responseFactory;
-		$this->ApplicationService = ApplicationService::getInstance();
+		$this->ApplicationService = ApplicationService::GetInstance();
 	}
 
 	protected $AppContainer;

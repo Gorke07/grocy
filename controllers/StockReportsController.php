@@ -2,6 +2,7 @@
 
 namespace Grocy\Controllers;
 
+use Grocy\Services\DatabaseService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -95,9 +96,9 @@ class StockReportsController extends BaseController
 			";
 		}
 
-		return $this->renderPage($response, 'stockreportspendings', [
-			'metrics' => $this->getDatabaseService()->ExecuteDbQuery($sql)->fetchAll(\PDO::FETCH_OBJ),
-			'productGroups' => $this->getDatabase()->product_groups()->where('active = 1')->orderBy('name', 'COLLATE NOCASE'),
+		return $this->RenderPage($response, 'stockreportspendings', [
+			'metrics' => DatabaseService::GetInstance()->ExecuteDbQuery($sql)->fetchAll(\PDO::FETCH_OBJ),
+			'productGroups' => $this->DB->product_groups()->where('active = 1')->orderBy('name', 'COLLATE NOCASE'),
 			'selectedGroup' => isset($request->getQueryParams()['product-group']) ? $request->getQueryParams()['product-group'] : null,
 			'groupBy' => $groupBy
 		]);

@@ -9,7 +9,7 @@ class SessionAuthMiddleware extends AuthMiddleware
 {
 	public function authenticate(Request $request)
 	{
-		$sessionService = SessionService::getInstance();
+		$sessionService = SessionService::GetInstance();
 
 		if (!isset($_COOKIE[SessionService::SESSION_COOKIE_NAME]) || !$sessionService->IsValidSession($_COOKIE[SessionService::SESSION_COOKIE_NAME]))
 		{

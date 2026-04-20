@@ -1,8 +1,9 @@
 <?php
 
-namespace Grocy\Controllers;
+namespace Grocy\Controllers\Api;
 
 use Grocy\Controllers\Users\User;
+use Grocy\Services\UsersService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -12,10 +13,10 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			User::checkPermission($request, User::PERMISSION_ADMIN);
+			User::CheckPermission($request, User::PERMISSION_ADMIN);
 			$requestBody = $this->GetParsedAndFilteredRequestBody($request);
 
-			$this->getDatabase()->user_permissions()->createRow([
+			$this->DB->user_permissions()->createRow([
 				'user_id' => $args['userId'],
 				'permission_id' => $requestBody['permission_id']
 			])->save();
@@ -33,7 +34,7 @@ class UsersApiController extends BaseApiController
 
 	public function CreateUser(Request $request, Response $response, array $args)
 	{
-		User::checkPermission($request, User::PERMISSION_USERS_CREATE);
+		User::CheckPermission($request, User::PERMISSION_USERS_CREATE);
 		$requestBody = $this->GetParsedAndFilteredRequestBody($request);
 
 		try
@@ -49,7 +50,7 @@ class UsersApiController extends BaseApiController
 			}
 			unset($requestBody['password_base64']);
 
-			$this->getUsersService()->CreateUser($requestBody['username'], $requestBody['first_name'], $requestBody['last_name'], $requestBody['password'], $requestBody['picture_file_name']);
+			UsersService::GetInstance()->CreateUser($requestBody['username'], $requestBody['first_name'], $requestBody['last_name'], $requestBody['password'], $requestBody['picture_file_name']);
 			return $this->EmptyApiResponse($response);
 		}
 		catch (\Exception $ex)
@@ -60,10 +61,10 @@ class UsersApiController extends BaseApiController
 
 	public function DeleteUser(Request $request, Response $response, array $args)
 	{
-		User::checkPermission($request, User::PERMISSION_USERS_EDIT);
+		User::CheckPermission($request, User::PERMISSION_USERS_EDIT);
 		try
 		{
-			$this->getUsersService()->DeleteUser($args['userId']);
+			UsersService::GetInstance()->DeleteUser($args['userId']);
 			return $this->EmptyApiResponse($response);
 		}
 		catch (\Exception $ex)
@@ -76,11 +77,11 @@ class UsersApiController extends BaseApiController
 	{
 		if ($args['userId'] == GROCY_USER_ID)
 		{
-			User::checkPermission($request, User::PERMISSION_USERS_EDIT_SELF);
+			User::CheckPermission($request, User::PERMISSION_USERS_EDIT_SELF);
 		}
 		else
 		{
-			User::checkPermission($request, User::PERMISSION_USERS_EDIT);
+			User::CheckPermission($request, User::PERMISSION_USERS_EDIT);
 		}
 
 		$requestBody = $this->GetParsedAndFilteredRequestBody($request);
@@ -93,7 +94,7 @@ class UsersApiController extends BaseApiController
 			}
 			unset($requestBody['password_base64']);
 
-			$this->getUsersService()->EditUser($args['userId'], $requestBody['username'], $requestBody['first_name'], $requestBody['last_name'], $requestBody['password'], $requestBody['picture_file_name']);
+			UsersService::GetInstance()->EditUser($args['userId'], $requestBody['username'], $requestBody['first_name'], $requestBody['last_name'], $requestBody['password'], $requestBody['picture_file_name']);
 			return $this->EmptyApiResponse($response);
 		}
 		catch (\Exception $ex)
@@ -106,7 +107,7 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			$value = $this->getUsersService()->GetUserSetting(GROCY_USER_ID, $args['settingKey']);
+			$value = UsersService::GetInstance()->GetUserSetting(GROCY_USER_ID, $args['settingKey']);
 			return $this->ApiResponse($response, ['value' => $value]);
 		}
 		catch (\Exception $ex)
@@ -119,7 +120,7 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			return $this->ApiResponse($response, $this->getUsersService()->GetUserSettings(GROCY_USER_ID));
+			return $this->ApiResponse($response, UsersService::GetInstance()->GetUserSettings(GROCY_USER_ID));
 		}
 		catch (\Exception $ex)
 		{
@@ -129,10 +130,10 @@ class UsersApiController extends BaseApiController
 
 	public function GetUsers(Request $request, Response $response, array $args)
 	{
-		User::checkPermission($request, User::PERMISSION_USERS_READ);
+		User::CheckPermission($request, User::PERMISSION_USERS_READ);
 		try
 		{
-			return $this->FilteredApiResponse($response, $this->getUsersService()->GetUsersAsDto(), $request->getQueryParams());
+			return $this->FilteredApiResponse($response, UsersService::GetInstance()->GetUsersAsDto(), $request->getQueryParams());
 		}
 		catch (\Exception $ex)
 		{
@@ -144,7 +145,7 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			return $this->ApiResponse($response, $this->getUsersService()->GetUsersAsDto()->where('id', GROCY_USER_ID));
+			return $this->ApiResponse($response, UsersService::GetInstance()->GetUsersAsDto()->where('id', GROCY_USER_ID));
 		}
 		catch (\Exception $ex)
 		{
@@ -156,11 +157,11 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			User::checkPermission($request, User::PERMISSION_ADMIN);
+			User::CheckPermission($request, User::PERMISSION_ADMIN);
 
 			return $this->ApiResponse(
 				$response,
-				$this->getDatabase()->user_permissions()->where('user_id', $args['userId'])
+				$this->DB->user_permissions()->where('user_id', $args['userId'])
 			);
 		}
 		catch (\Slim\Exception\HttpSpecializedException $ex)
@@ -177,10 +178,10 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			User::checkPermission($request, User::PERMISSION_ADMIN);
+			User::CheckPermission($request, User::PERMISSION_ADMIN);
 
 			$requestBody = $request->getParsedBody();
-			$db = $this->getDatabase();
+			$db = $this->DB;
 			$db->user_permissions()
 				->where('user_id', $args['userId'])
 				->delete();
@@ -224,7 +225,7 @@ class UsersApiController extends BaseApiController
 		{
 			$requestBody = $this->GetParsedAndFilteredRequestBody($request);
 
-			$value = $this->getUsersService()->SetUserSetting(GROCY_USER_ID, $args['settingKey'], $requestBody['value']);
+			$value = UsersService::GetInstance()->SetUserSetting(GROCY_USER_ID, $args['settingKey'], $requestBody['value']);
 			return $this->EmptyApiResponse($response);
 		}
 		catch (\Exception $ex)
@@ -237,7 +238,7 @@ class UsersApiController extends BaseApiController
 	{
 		try
 		{
-			$value = $this->getUsersService()->DeleteUserSetting(GROCY_USER_ID, $args['settingKey']);
+			$value = UsersService::GetInstance()->DeleteUserSetting(GROCY_USER_ID, $args['settingKey']);
 			return $this->EmptyApiResponse($response);
 		}
 		catch (\Exception $ex)

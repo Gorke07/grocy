@@ -10,12 +10,12 @@ class LoginController extends BaseController
 {
 	public function LoginPage(Request $request, Response $response, array $args)
 	{
-		return $this->renderPage($response, 'login');
+		return $this->RenderPage($response, 'login');
 	}
 
 	public function Logout(Request $request, Response $response, array $args)
 	{
-		$this->getSessionService()->RemoveSession($_COOKIE[SessionService::SESSION_COOKIE_NAME]);
+		SessionService::GetInstance()->RemoveSession($_COOKIE[SessionService::SESSION_COOKIE_NAME]);
 		return $response->withRedirect($this->AppContainer->get('UrlManager')->ConstructUrl('/'));
 	}
 

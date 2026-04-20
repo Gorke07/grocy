@@ -29,7 +29,7 @@ abstract class AuthMiddleware extends BaseMiddleware
 
 		if (GROCY_MODE === 'dev' || GROCY_MODE === 'demo' || GROCY_MODE === 'prerelease' || GROCY_IS_EMBEDDED_INSTALL || GROCY_DISABLE_AUTH)
 		{
-			$sessionService = SessionService::getInstance();
+			$sessionService = SessionService::GetInstance();
 			$user = $sessionService->GetDefaultUser();
 
 			define('GROCY_AUTHENTICATED', true);

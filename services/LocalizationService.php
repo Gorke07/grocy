@@ -6,12 +6,13 @@ use Gettext\Translation;
 use Gettext\Translations;
 use Gettext\Translator;
 
-class LocalizationService
+class LocalizationService extends BaseService
 {
 	public function __construct(string $culture)
 	{
-		$this->Culture = $culture;
+		parent::__construct();
 
+		$this->Culture = $culture;
 		$this->LoadLocalizations($culture);
 	}
 
@@ -111,24 +112,26 @@ class LocalizationService
 		}
 	}
 
-	public static function getInstance(string $culture)
+	public static function GetInstance(string $culture = '')
 	{
+		if (empty($culture))
+		{
+			if (defined('GROCY_LOCALE'))
+			{
+				$culture = GROCY_LOCALE;
+			}
+			else
+			{
+				$culture = GROCY_DEFAULT_LOCALE;
+			}
+		}
+
 		if (!in_array($culture, self::$instanceMap))
 		{
 			self::$instanceMap[$culture] = new self($culture);
 		}
 
 		return self::$instanceMap[$culture];
-	}
-
-	protected function getDatabaseService()
-	{
-		return DatabaseService::getInstance();
-	}
-
-	protected function getdatabase()
-	{
-		return $this->getDatabaseService()->GetDbConnection();
 	}
 
 	private function LoadLocalizations()
@@ -147,11 +150,7 @@ class LocalizationService
 			$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/userfield_types.pot'));
 			$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/permissions.pot'));
 			$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/locales.pot'));
-
-			if (GROCY_MODE !== 'production')
-			{
-				$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/demo_data.pot'));
-			}
+			$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/demo_data.pot'));
 		}
 
 		$this->Po = Translations::fromPoFile(__DIR__ . "/../localization/$culture/strings.po");
@@ -191,7 +190,8 @@ class LocalizationService
 			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/locales.po"));
 		}
 
-		if (GROCY_MODE !== 'production' && file_exists(__DIR__ . "/../localization/$culture/demo_data.po"))
+		// Load demo data localizations also during database migrations since e.g. default quantity units are created localized by that
+		if ((GROCY_MODE !== 'production' || defined('GROCY_DATABASE_MIGRATIONS_RUNNING')) && file_exists(__DIR__ . "/../localization/$culture/demo_data.po"))
 		{
 			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/demo_data.po"));
 		}
@@ -204,7 +204,7 @@ class LocalizationService
 		$quantityUnits = null;
 		try
 		{
-			$quantityUnits = $this->getDatabase()->quantity_units()->where('active = 1')->fetchAll();
+			$quantityUnits = $this->DB->quantity_units()->where('active = 1')->fetchAll();
 		}
 		catch (\Exception $ex)
 		{

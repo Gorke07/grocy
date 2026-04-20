@@ -4,22 +4,16 @@ namespace Grocy\Services;
 
 class DemoDataGeneratorService extends BaseService
 {
-	public function __construct()
-	{
-		$this->LocalizationService = new LocalizationService(GROCY_DEFAULT_LOCALE);
-	}
-
-	protected $LocalizationService;
 	private $LastSupermarketId = 1;
 
 	public function PopulateDemoData($skip = false)
 	{
-		$rowCount = $this->getDatabaseService()->ExecuteDbQuery('SELECT COUNT(*) FROM migrations WHERE migration = -1')->fetchColumn();
+		$rowCount = DatabaseService::GetInstance()->ExecuteDbQuery('SELECT COUNT(*) FROM migrations WHERE migration = -1')->fetchColumn();
 		if ($rowCount == 0)
 		{
 			if ($skip)
 			{
-				$this->getDatabaseService()->ExecuteDbStatement('INSERT INTO migrations (migration) VALUES (-1);');
+				DatabaseService::GetInstance()->ExecuteDbStatement('INSERT INTO migrations (migration) VALUES (-1);');
 				return;
 			}
 
@@ -225,7 +219,7 @@ class DemoDataGeneratorService extends BaseService
 
 				INSERT INTO migrations (migration) VALUES (-1);
 			";
-			$this->getDatabaseService()->ExecuteDbStatement($sql);
+			DatabaseService::GetInstance()->ExecuteDbStatement($sql);
 
 			$stockTransactionId = uniqid();
 			$stockService = new StockService();
@@ -323,7 +317,7 @@ class DemoDataGeneratorService extends BaseService
 			$choresService = new ChoresService();
 			for ($i = 1; $i <= 25; $i++)
 			{
-				foreach ($this->getDatabase()->chores() as $chore)
+				foreach ($this->DB->chores() as $chore)
 				{
 					$hours = $chore->period_interval;
 					if ($chore->period_type == 'weekly')
@@ -341,7 +335,7 @@ class DemoDataGeneratorService extends BaseService
 			}
 			$choresService->TrackChore(1, date('Y-m-d'), array_rand([1, 2, 3, 4]) + 1);
 			$choresService->TrackChore(4, date('Y-m-d'), array_rand([1, 2, 3, 4]) + 1);
-			$this->getDatabaseService()->ExecuteDbStatement("UPDATE chores SET rescheduled_date = DATE(DATE('now', 'localtime'), '+10 days') WHERE id = 6");
+			DatabaseService::GetInstance()->ExecuteDbStatement("UPDATE chores SET rescheduled_date = DATE(DATE('now', 'localtime'), '+10 days') WHERE id = 6");
 
 			$batteriesService = new BatteriesService();
 			$batteriesService->TrackChargeCycle(1, date('Y-m-d H:i:s', strtotime('-720 days')));
@@ -427,13 +421,13 @@ class DemoDataGeneratorService extends BaseService
 
 	private function __n_sql($number, string $singularForm, string $pluralForm)
 	{
-		$localizedText = $this->getLocalizationService()->__n($number, $singularForm, $pluralForm);
+		$localizedText = LocalizationService::GetInstance()->__n($number, $singularForm, $pluralForm);
 		return str_replace("'", "''", $localizedText);
 	}
 
 	private function __t_sql(string $text)
 	{
-		$localizedText = $this->getLocalizationService()->__t($text, null);
+		$localizedText = LocalizationService::GetInstance()->__t($text, null);
 		return str_replace("'", "''", $localizedText);
 	}
 }

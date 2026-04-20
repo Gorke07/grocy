@@ -1,6 +1,6 @@
 <?php
 
-namespace Grocy\Controllers;
+namespace Grocy\Controllers\Api;
 
 use Grocy\Services\FilesService;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -14,7 +14,7 @@ class FilesApiController extends BaseApiController
 	{
 		try
 		{
-			if (!in_array($args['group'], $this->getOpenApiSpec()->components->schemas->FileGroups->enum))
+			if (!in_array($args['group'], $this->GetOpenApispec()->components->schemas->FileGroups->enum))
 			{
 				throw new \Exception('Invalid file group');
 			}
@@ -28,7 +28,7 @@ class FilesApiController extends BaseApiController
 				throw new \Exception('Invalid filename');
 			}
 
-			$this->getFilesService()->DeleteFile($args['group'], $fileName);
+			FilesService::GetInstance()->DeleteFile($args['group'], $fileName);
 
 			return $this->EmptyApiResponse($response);
 		}
@@ -42,13 +42,13 @@ class FilesApiController extends BaseApiController
 	{
 		try
 		{
-			if (!in_array($args['group'], $this->getOpenApiSpec()->components->schemas->FileGroups->enum))
+			if (!in_array($args['group'], $this->GetOpenApispec()->components->schemas->FileGroups->enum))
 			{
 				throw new \Exception('Invalid file group');
 			}
 
-			$fileName = $this->checkFileName($args['fileName']);
-			$filePath = $this->getFilePath($args['group'], $fileName, $request->getQueryParams());
+			$fileName = $this->CheckFileName($args['fileName']);
+			$filePath = $this->GetFilePath($args['group'], $fileName, $request->getQueryParams());
 
 			if (file_exists($filePath))
 			{
@@ -72,14 +72,14 @@ class FilesApiController extends BaseApiController
 	{
 		try
 		{
-			if (!in_array($args['group'], $this->getOpenApiSpec()->components->schemas->FileGroups->enum))
+			if (!in_array($args['group'], $this->GetOpenApispec()->components->schemas->FileGroups->enum))
 			{
 				throw new \Exception('Invalid file group');
 			}
 
 			$fileInfo = explode('_', $args['fileName']);
-			$fileName = $this->checkFileName($fileInfo[1]);
-			$filePath = $this->getFilePath($args['group'], base64_decode($fileInfo[0]), $request->getQueryParams());
+			$fileName = $this->CheckFileName($fileInfo[1]);
+			$filePath = $this->GetFilePath($args['group'], base64_decode($fileInfo[0]), $request->getQueryParams());
 
 			if (file_exists($filePath))
 			{
@@ -103,15 +103,15 @@ class FilesApiController extends BaseApiController
 	{
 		try
 		{
-			if (!in_array($args['group'], $this->getOpenApiSpec()->components->schemas->FileGroups->enum))
+			if (!in_array($args['group'], $this->GetOpenApispec()->components->schemas->FileGroups->enum))
 			{
 				throw new \Exception('Invalid file group');
 			}
 
-			$fileName = $this->checkFileName($args['fileName']);
+			$fileName = $this->CheckFileName($args['fileName']);
 
-			$fileHandle = fopen($this->getFilesService()->GetFilePath($args['group'], $fileName), 'xb');
-			if($fileHandle === false)
+			$fileHandle = fopen(FilesService::GetInstance()->GetFilePath($args['group'], $fileName), 'xb');
+			if ($fileHandle === false)
 			{
 				throw new \Exception("Error while creating file $fileName");
 			}
@@ -139,7 +139,7 @@ class FilesApiController extends BaseApiController
 		}
 	}
 
-	protected function checkFileName(string $fileName)
+	protected function CheckFileName(string $fileName)
 	{
 		if (IsValidFileName(base64_decode($fileName)))
 		{
@@ -153,7 +153,7 @@ class FilesApiController extends BaseApiController
 		return $fileName;
 	}
 
-	protected function getFilePath(string $group, string $fileName, array $queryParams = [])
+	protected function GetFilePath(string $group, string $fileName, array $queryParams = [])
 	{
 		$forceServeAs = null;
 		if (isset($queryParams['force_serve_as']) && !empty($queryParams['force_serve_as']))
@@ -175,11 +175,11 @@ class FilesApiController extends BaseApiController
 				$bestFitWidth = $queryParams['best_fit_width'];
 			}
 
-			$filePath = $this->getFilesService()->DownscaleImage($group, $fileName, $bestFitHeight, $bestFitWidth);
+			$filePath = FilesService::GetInstance()->DownscaleImage($group, $fileName, $bestFitHeight, $bestFitWidth);
 		}
 		else
 		{
-			$filePath = $this->getFilesService()->GetFilePath($group, $fileName);
+			$filePath = FilesService::GetInstance()->GetFilePath($group, $fileName);
 		}
 
 		return $filePath;

@@ -2,7 +2,9 @@
 
 // This is executed inside DatabaseMigrationService class/context
 
-$db = $this->getDatabaseService()->GetDbConnection();
+use Grocy\Services\DatabaseService;
+
+$db = DatabaseService::GetInstance()->GetDbConnection();
 
 if (defined('GROCY_HTTP_USER'))
 {

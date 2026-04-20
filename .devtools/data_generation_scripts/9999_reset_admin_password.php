@@ -2,7 +2,9 @@
 
 // This is executed inside DatabaseMigrationService class/context
 
-$db = $this->getDatabaseService()->GetDbConnection();
+use Grocy\Services\DatabaseService;
+
+$db = DatabaseService::GetInstance()->GetDbConnection();
 
 // Reset the password of the user "admin" to "admin"
 $adminUserRow = $db->users()->where('username', 'admin')->fetch();

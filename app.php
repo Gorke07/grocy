@@ -121,9 +121,7 @@ $app->add(new $authMiddlewareClass($container, $app->getResponseFactory()));
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
 $errorMiddleware = $app->addErrorMiddleware(true, false, false);
-$errorMiddleware->setDefaultErrorHandler(
-	new ExceptionController($app, $container)
-);
+$errorMiddleware->setDefaultErrorHandler(new ExceptionController($container, $app->getResponseFactory()));
 
 $app->getRouteCollector()->setCacheFile(GROCY_DATAPATH . '/viewcache/route_cache.php');
 
