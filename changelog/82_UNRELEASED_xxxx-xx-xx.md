@@ -55,6 +55,7 @@
 
 - Fixed accent insensitive searching using the general table search field was broken
 - Fixed that it wasn't possible to log in using passwords containing special escape sequences (e.g. `<<`)
+- Fixed that the initially created location and quantity units weren't localized (only applies to new installations)
 
 ### API
 

@@ -12,8 +12,6 @@ class DatabaseMigrationService extends BaseService
 
 	public function MigrateDatabase()
 	{
-		define('GROCY_DATABASE_MIGRATIONS_RUNNING', true);
-
 		DatabaseService::GetInstance()->ExecuteDbStatement("CREATE TABLE IF NOT EXISTS migrations (migration INTEGER NOT NULL PRIMARY KEY UNIQUE, execution_time_timestamp DATETIME DEFAULT (datetime('now', 'localtime')))");
 
 		$migrationFiles = [];

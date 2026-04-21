@@ -8,12 +8,12 @@ use Gettext\Translator;
 
 class LocalizationService extends BaseService
 {
-	public function __construct(string $culture)
+	public function __construct(string $locale)
 	{
 		parent::__construct();
 
-		$this->Culture = $culture;
-		$this->LoadLocalizations($culture);
+		$this->Locale = $locale;
+		$this->LoadLocalizations($locale);
 	}
 
 	protected $Po;
@@ -22,8 +22,8 @@ class LocalizationService extends BaseService
 	protected $PotMain;
 	protected $Translator;
 	protected $TranslatorQu;
-	protected $Culture;
-	private static $instanceMap = [];
+	protected $Locale;
+	private static $InstanceMap = [];
 
 	public function CheckAndAddMissingTranslationToPot($text)
 	{
@@ -112,31 +112,24 @@ class LocalizationService extends BaseService
 		}
 	}
 
-	public static function GetInstance(string $culture = '')
+	public static function GetInstance(string $locale = '')
 	{
-		if (empty($culture))
+		if (empty($locale))
 		{
-			if (defined('GROCY_LOCALE'))
-			{
-				$culture = GROCY_LOCALE;
-			}
-			else
-			{
-				$culture = GROCY_DEFAULT_LOCALE;
-			}
+			$locale = GROCY_LOCALE;
 		}
 
-		if (!in_array($culture, self::$instanceMap))
+		if (!in_array($locale, self::$InstanceMap))
 		{
-			self::$instanceMap[$culture] = new self($culture);
+			self::$InstanceMap[$locale] = new self($locale);
 		}
 
-		return self::$instanceMap[$culture];
+		return self::$InstanceMap[$locale];
 	}
 
 	private function LoadLocalizations()
 	{
-		$culture = $this->Culture;
+		$locale = $this->Locale;
 
 		if (GROCY_MODE === 'dev')
 		{
@@ -153,47 +146,46 @@ class LocalizationService extends BaseService
 			$this->Pot = $this->Pot->mergeWith(Translations::fromPoFile(__DIR__ . '/../localization/demo_data.pot'));
 		}
 
-		$this->Po = Translations::fromPoFile(__DIR__ . "/../localization/$culture/strings.po");
+		$this->Po = Translations::fromPoFile(__DIR__ . "/../localization/$locale/strings.po");
 
-		if (file_exists(__DIR__ . "/../localization/$culture/chore_assignment_types.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/chore_assignment_types.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/chore_assignment_types.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/chore_assignment_types.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/component_translations.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/component_translations.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/component_translations.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/component_translations.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/stock_transaction_types.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/stock_transaction_types.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/stock_transaction_types.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/stock_transaction_types.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/chore_period_types.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/chore_period_types.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/chore_period_types.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/chore_period_types.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/userfield_types.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/userfield_types.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/userfield_types.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/userfield_types.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/permissions.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/permissions.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/permissions.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/permissions.po"));
 		}
 
-		if (file_exists(__DIR__ . "/../localization/$culture/locales.po"))
+		if (file_exists(__DIR__ . "/../localization/$locale/locales.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/locales.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/locales.po"));
 		}
 
-		// Load demo data localizations also during database migrations since e.g. default quantity units are created localized by that
-		if ((GROCY_MODE !== 'production' || defined('GROCY_DATABASE_MIGRATIONS_RUNNING')) && file_exists(__DIR__ . "/../localization/$culture/demo_data.po"))
+		if (GROCY_MODE !== 'production' && file_exists(__DIR__ . "/../localization/$locale/demo_data.po"))
 		{
-			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$culture/demo_data.po"));
+			$this->Po = $this->Po->mergeWith(Translations::fromPoFile(__DIR__ . "/../localization/$locale/demo_data.po"));
 		}
 
 		$this->Translator = new Translator();
