@@ -2,8 +2,8 @@
 
 namespace Grocy\Middleware;
 
-use Grocy\Services\ApplicationService;
 use DI\Container;
+use Grocy\Services\ApplicationService;
 use Psr\Http\Message\ResponseFactoryInterface;
 
 class BaseMiddleware

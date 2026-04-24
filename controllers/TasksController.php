@@ -3,8 +3,8 @@
 namespace Grocy\Controllers;
 
 use Grocy\Services\TasksService;
-use Grocy\Services\UsersService;
 use Grocy\Services\UserfieldsService;
+use Grocy\Services\UsersService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

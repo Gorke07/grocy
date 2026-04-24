@@ -4,8 +4,8 @@ namespace Grocy\Controllers\Api;
 
 use Grocy\Controllers\Users\User;
 use Grocy\Services\StockService;
-use Grocy\Services\UsersService;
 use Grocy\Services\UserfieldsService;
+use Grocy\Services\UsersService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

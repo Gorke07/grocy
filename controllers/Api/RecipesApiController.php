@@ -3,8 +3,8 @@
 namespace Grocy\Controllers\Api;
 
 use Grocy\Controllers\Users\User;
-use Grocy\Helpers\WebhookRunner;
 use Grocy\Helpers\Grocycode;
+use Grocy\Helpers\WebhookRunner;
 use Grocy\Services\RecipesService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;

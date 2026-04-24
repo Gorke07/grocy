@@ -2,12 +2,12 @@
 
 namespace Grocy\Controllers;
 
+use DI\Container;
 use Grocy\Controllers\Users\User;
 use Grocy\Services\ApplicationService;
 use Grocy\Services\DatabaseService;
 use Grocy\Services\LocalizationService;
 use Grocy\Services\UsersService;
-use DI\Container;
 
 class BaseController
 {

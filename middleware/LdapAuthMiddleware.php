@@ -3,8 +3,8 @@
 namespace Grocy\Middleware;
 
 use Grocy\Services\DatabaseService;
-use Grocy\Services\UsersService;
 use Grocy\Services\SessionService;
+use Grocy\Services\UsersService;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class LdapAuthMiddleware extends AuthMiddleware

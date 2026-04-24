@@ -2,13 +2,13 @@
 
 namespace Grocy\Controllers;
 
+use DI\Container;
 use Grocy\Helpers\Grocycode;
 use Grocy\Services\LocalizationService;
 use Grocy\Services\RecipesService;
 use Grocy\Services\StockService;
-use Grocy\Services\UsersService;
 use Grocy\Services\UserfieldsService;
-use DI\Container;
+use Grocy\Services\UsersService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

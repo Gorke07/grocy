@@ -2,9 +2,9 @@
 
 namespace Grocy\Controllers;
 
+use DI\Container;
 use Grocy\Controllers\Api\BaseApiController;
 use Grocy\Services\ApplicationService;
-use DI\Container;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;

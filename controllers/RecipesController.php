@@ -2,10 +2,10 @@
 
 namespace Grocy\Controllers;
 
+use Grocy\Helpers\Grocycode;
 use Grocy\Services\RecipesService;
 use Grocy\Services\StockService;
 use Grocy\Services\UserfieldsService;
-use Grocy\Helpers\Grocycode;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 

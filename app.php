@@ -1,8 +1,8 @@
 <?php
 
 use Grocy\Controllers\ExceptionController;
-use Grocy\Helpers\UrlManager;
 use Grocy\Helpers\SlimBladeView;
+use Grocy\Helpers\UrlManager;
 use Grocy\Middleware\LocaleMiddleware;
 use Psr\Container\ContainerInterface as Container;
 use Slim\Factory\AppFactory;
